@@ -19,6 +19,7 @@ const LearnPage =() => {
             <div>
                 <FeedWrapper>
                     <Header title="ICT" />
+                    
                 </FeedWrapper>
             </div>
         </div>
