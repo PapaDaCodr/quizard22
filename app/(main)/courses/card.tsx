@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
+import Image from "next/image";
 
 type Props = {
   title: string;
@@ -32,6 +33,16 @@ active,
       )}
       
     </div>
+    <Image
+    src={imageSrc}
+    alt={title}
+    height={70}
+    width={93.33}
+    className="rounded-lg drop-shadow-md border object-cover"
+    />
+    <p className="text-neutral-700 text-center font-bold mt-3">
+      {title}
+    </p>
     </div>
   )
 }

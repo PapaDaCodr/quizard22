@@ -7,7 +7,6 @@ body,
 :root{
   @apply h-full;
 }
-
 @layer base {
   :root {
     --background: 0 0% 100%;
