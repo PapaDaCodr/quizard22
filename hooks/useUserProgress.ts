@@ -3,21 +3,11 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from "@clerk/nextjs";
-
-interface UserProgress {
-  // Define the structure of your user progress data here
-  userId: string;
-  activeCourse: {
-    id: string;
-    title: string;
-    // other course properties
-  };
-  // other progress properties
-}
+import { UserProgres } from '@/components/user-progress';
 
 export function useUserProgress() {
   const { userId } = useAuth();
-  const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
+  const [userProgress, setUserProgress] = useState<typeof UserProgres | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

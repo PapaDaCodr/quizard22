@@ -10,7 +10,7 @@ points: number;
 hasActiveSubscription: boolean;
 }
 
-export const UserProgress =({ 
+export const UserProgres =({ 
   activeCourse, 
   hearts,
   points,

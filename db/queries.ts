@@ -4,6 +4,7 @@ import db from "./drizzle";
 import { eq } from "drizzle-orm";
 import { userProgress } from "./schema";
 import { auth } from "@clerk/nextjs/server";
+import { courses } from "./schema";
 
 export const getCourses = cache(async () => {
   const data = await db.query.courses.findMany();
@@ -24,5 +25,14 @@ export const getServerSideUserProgress = cache(async () => {
     },
   });
 
+  return data;
+});
+
+export const getCoursesById = cache(async (courseId: number) =>{
+  const data = await db.query.courses.findFirst({
+    where: eq(courses.id, courseId),
+  })
+
+  // TODO: Populate Units and Lessons
   return data;
 });
