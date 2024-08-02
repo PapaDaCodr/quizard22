@@ -17,6 +17,9 @@ const LearnPage = async() => {
     if(!UserProgress || UserProgress.activeCourse){
         redirect("/courses")
     }
+    if(!UserProgress || UserProgress.activeCourse){
+        redirect("/learn")
+    }
 
     return(
         <div className="flex flex-row-reverse gap-[48px] px-6">
