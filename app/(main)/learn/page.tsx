@@ -8,11 +8,7 @@ import { redirect } from "next/navigation";
 const LearnPage = async () => {
     const userProgressData = await getServerSideUserProgress();
 
-    if (!userProgressData) {
-        redirect("/courses");
-    }
-
-    if (!userProgressData.activeCourse) {
+    if (!userProgressData || !userProgressData.activeCourse) {
         redirect("/courses");
     }
 
@@ -21,16 +17,16 @@ const LearnPage = async () => {
             <div>
                 <StickyWrapper>
                     <UserProgres 
-                        activeCourse={{title: "Spanish", imageSrc: "/es.svg"}}
-                        hearts={5}
-                        points={0}
+                        activeCourse={userProgressData.activeCourse}
+                        hearts={userProgressData.hearts}
+                        points={userProgressData.points}
                         hasActiveSubscription={false}
                     />
                 </StickyWrapper>
             </div>
             <div>
                 <FeedWrapper>
-                    <Header title="ICT" />
+                    <Header title={userProgressData.activeCourse.title} />
                 </FeedWrapper>
             </div>
         </div>
