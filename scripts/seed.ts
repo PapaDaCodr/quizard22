@@ -55,13 +55,50 @@ const main = async () => {
         unitId: 1,
         title: "Introduction to Computer System",
         
+      }]);
+
+      
+    await db.insert(schema.challenges).values([
+      {
+        id: 1,
+        lessonId: 1,
+        type: "SELECT",
+        order: 1,
+        question: "What is the name of an electronic tool that facilitates the input, processing, and output of information?"
+      }
+    ])
+
+    await db.insert(schema.challengeOptions).values([
+      {
+        id: 1,
+        challengeId: 1,
+        correct: true,
+        text: "Computer"
+
       },
+
+      {
+        id: 2,
+        challengeId: 1,
+        correct: false,
+        text: "Motherboard",
+      },
+
+      {
+        id: 3,
+        challengeId: 1,
+        correct: false,
+        text: "Operating System",
+      }
+    ])
+
+    await db.insert(schema.lessons).values([
       {
         id: 2,
         unitId: 1,
         title: "History of Computer System",
       }
-    ])
+    ]),
 
     console.log("Seeding finished");
   }

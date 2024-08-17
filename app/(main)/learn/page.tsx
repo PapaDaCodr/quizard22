@@ -8,11 +8,15 @@ import { redirect } from "next/navigation";
 const LearnPage = async () => {
     try {
         const userProgressData = await getServerSideUserProgress();
+        console.log('User Progress Data:', userProgressData);
+
+        if (!userProgressData || !userProgressData.activeCourse) {
+            console.log('Redirecting to /courses due to missing user progress or active course');
+            redirect("/courses");
+        }
+
         const unitsData = await getUnits();
-
-        console.log('User Progress:', userProgressData);
-        console.log('Units:', unitsData);
-
+        console.log('Units Data:', unitsData);
     const [userProgress, units] = await Promise.all([
         userProgressData,
         unitsData
@@ -58,9 +62,8 @@ const LearnPage = async () => {
     );
 
 } catch (error) {
-    console.error('Error fetching data:', error);
+    console.error('Error in LearnPage:', error);
     return <div>Error loading content. Please try again later.</div>;
 }
 };
-
 export default LearnPage;

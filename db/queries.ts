@@ -56,6 +56,7 @@ export const getServerSideUserProgress = cache(async () => {
   const { userId } = auth();
 
   if (!userId) {
+    console.log("No userId found");
     return null;
   }
 
@@ -66,6 +67,7 @@ export const getServerSideUserProgress = cache(async () => {
     },
   });
 
+  console.log("User progress data:", data);
   return data;
 });
 
