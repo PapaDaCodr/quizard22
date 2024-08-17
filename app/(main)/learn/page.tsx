@@ -4,6 +4,7 @@ import { Header } from "./header";
 import { UserProgres } from "@/components/user-progress";
 import { getServerSideUserProgress, getUnits } from "@/db/queries";
 import { redirect } from "next/navigation";
+import { Unit } from "./unit";
 
 const LearnPage = async () => {
     try {
@@ -42,18 +43,16 @@ const LearnPage = async () => {
                 <FeedWrapper>
                     <Header title={userProgressData.activeCourse.title} />
                     {units.map((unit) => (
-                        <div key={unit.id} className="mb-10 border rounded-lg p-4">
-                            <h2 className="text-2xl font-bold mb-4">{unit.title}</h2>
-                            <p>{unit.description}</p>
-                            <div className="mt-4">
-                                <h3 className="text-xl font-semibold mb-2">Lessons:</h3>
-                                {unit.lessons.map((lesson) => (
-                                    <div key={lesson.id} className="mb-2 p-2 border rounded">
-                                        <h4 className="font-medium">{lesson.title}</h4>
-                                        <p>Status: {lesson.completed ? 'Completed' : 'In Progress'}</p>
-                                    </div>
-                                ))}
-                            </div>
+                        <div key={unit.id} className="mb-10">
+                            <Unit
+                                id={unit.id}
+                                order={unit.order}
+                                description={unit.description}
+                                title={unit.title}
+                                lessons={unit.lessons}
+                                activeLesson={undefined}
+                                activeLessonPercentage={0}
+                            />
                         </div>
                     ))}
                 </FeedWrapper>
