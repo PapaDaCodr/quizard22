@@ -43,7 +43,7 @@ const main = async () => {
       {
         id: 1,
         courseId: 1,
-        title: "ICT",
+        title: "Unit 1",
         description: "Overview Of A Computer System",
         order: 1,
       }
