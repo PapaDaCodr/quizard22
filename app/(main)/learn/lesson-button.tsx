@@ -62,7 +62,36 @@ export const LessonButton = ({
           marginTop: isFirst && !isCompleted ? 60 : 24,
         }}
       >
+        {current ? (
+          <div className="h-[102px] w-[102px] reltive">
+            <div className="absolute -top-6 left-2.5 px-3 border-2
+            font-bold uppercase text-indigo-600 bg-white rounded-xl
+            animate-bounce tracking-wide z-10">
+            Start
+            <div 
+              className="absolute left-1/2 -bottom-2 w-0
+              h-0 border-x-8 border-x-transparent
+              border-t-0 transform -translate-x-1/2"
+              />
+            </div>
+          <CircularProgressbarWithChildren
+            value={Number.isNaN(percentage) ? 0 : percentage}
+            styles={{
+              path: {
+                stroke: "indigo",
+              },
+              trail: {
+                stroke: "#e5e7eb",
+              },
+            }}
+          >
 
+          </CircularProgressbarWithChildren>
+        ): (
+          <div>
+            Something
+          </div>
+        )}
 
       </div>
     </Link>
