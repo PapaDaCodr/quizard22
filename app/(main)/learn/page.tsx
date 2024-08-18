@@ -62,7 +62,7 @@ const LearnPage = async () => {
 
 } catch (error) {
     console.error('Error in LearnPage:', error);
-    return <div>Error loading content. Please try again later.</div>;
+    return redirect('/courses');
 }
 };
 export default LearnPage;
