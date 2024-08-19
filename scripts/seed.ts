@@ -99,6 +99,29 @@ const main = async () => {
         title: "History of Computer System",
       }
     ]),
+    await db.insert(schema.lessons).values([
+      {
+        id: 3,
+        
+        unitId: 1,
+        title: "History of Computer System",
+      }
+    ]),
+    await db.insert(schema.lessons).values([
+      {
+        id: 4,
+        unitId: 1,
+        title: "History of Computer System",
+      }
+    ]),
+    await db.insert(schema.lessons).values([
+      {
+        id: 5,
+        unitId: 1,
+        title: "History of Computer System",
+      }
+    ]),
+    
 
     console.log("Seeding finished");
   }
