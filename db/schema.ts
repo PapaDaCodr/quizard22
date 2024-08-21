@@ -32,6 +32,7 @@ export const unitRelations = relations(units, ({many, one}) =>({
 export const lessons = pgTable("lessons", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
+  order: integer("order").notNull(),
   unitId: integer("unit_id").references(() => units.id, {onDelete: "cascade"})
 });
 

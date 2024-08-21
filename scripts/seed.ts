@@ -52,6 +52,7 @@ const main = async () => {
     await db.insert(schema.lessons).values([
       {
         id: 1,
+        order: 1,
         unitId: 1,
         title: "Introduction to Computer System",
         
@@ -95,6 +96,7 @@ const main = async () => {
     await db.insert(schema.lessons).values([
       {
         id: 2,
+        order: 2,
         unitId: 1,
         title: "History of Computer System",
       }
@@ -102,7 +104,7 @@ const main = async () => {
     await db.insert(schema.lessons).values([
       {
         id: 3,
-        
+        order: 3,
         unitId: 1,
         title: "History of Computer System",
       }
@@ -112,6 +114,7 @@ const main = async () => {
         id: 4,
         unitId: 1,
         title: "History of Computer System",
+        order: 4
       }
     ]),
     await db.insert(schema.lessons).values([
@@ -119,6 +122,7 @@ const main = async () => {
         id: 5,
         unitId: 1,
         title: "History of Computer System",
+        order: 5
       }
     ]),
     

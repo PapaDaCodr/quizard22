@@ -2,46 +2,66 @@ import { FeedWrapper } from "@/components/feed-wrapper";
 import { StickyWrapper } from "@/components/sticky-wrapper";
 import { Header } from "./header";
 import { UserProgres } from "@/components/user-progress";
-import { getServerSideUserProgress, getUnits } from "@/db/queries";
+import { 
+    getCourseProgress, 
+    getServerSideUserProgress, 
+    getUnits,
+    getLessonPercentage,
+} from "@/db/queries";
 import { redirect } from "next/navigation";
 import { Unit } from "./unit";
+import { lessons, units as unitsSchema} from "@/db/schema";
 
 const LearnPage = async () => {
     try {
         const userProgressData = await getServerSideUserProgress();
         console.log('User Progress Data:', userProgressData);
 
-        if (!userProgressData || !userProgressData.activeCourse) {
-            console.log('Redirecting to /courses due to missing user progress or active course');
-            redirect("/courses");
-        }
-
         const unitsData = await getUnits();
         console.log('Units Data:', unitsData);
-    const [userProgress, units] = await Promise.all([
+
+        const courseProgressData =  getCourseProgress();
+        console.log('Course Progress Data:', courseProgressData);
+
+        
+
+        const lessonPercentageData =  getLessonPercentage();
+        console.log('lesson Progress Data:', lessonPercentageData);
+
+    const [userProgress, units, courseProgress, lessonPercentage ] = await Promise.all([
         userProgressData,
-        unitsData
+        unitsData,
+        courseProgressData,
+        lessonPercentageData,
     ]);
 
-    if (!userProgressData || !userProgressData.activeCourse) {
+    if (!userProgress || !userProgress.activeCourse) {
+        console.log('Redirecting to /courses due to missing user progress or active course');
         redirect("/courses");
     }
+
+    if (!courseProgress) {
+        console.log('Redirecting to /courses due to missing courseProgress');
+        redirect("/courses");
+    }
+
+    
 
     return (
         <div className="flex flex-row-reverse gap-[48px] px-6">
             <div>
                 <StickyWrapper>
                     <UserProgres
-                        activeCourse={userProgressData.activeCourse}
-                        hearts={userProgressData.hearts}
-                        points={userProgressData.points}
+                        activeCourse={userProgress.activeCourse}
+                        hearts={userProgress.hearts}
+                        points={userProgress.points}
                         hasActiveSubscription={false}
                     />
                 </StickyWrapper>
             </div>
             <div className="flex-1">
                 <FeedWrapper>
-                    <Header title={userProgressData.activeCourse.title} />
+                    <Header title={userProgress.activeCourse.title} />
                     {units.map((unit) => (
                         <div key={unit.id} className="mb-10">
                             <Unit
@@ -50,8 +70,8 @@ const LearnPage = async () => {
                                 description={unit.description}
                                 title={unit.title}
                                 lessons={unit.lessons}
-                                activeLesson={undefined}
-                                activeLessonPercentage={0}
+                                activeLesson={courseProgress.activeLesson as typeof lessons.$inferSelect & {unit: typeof unitsSchema.$inferSelect} | undefined}
+                                activeLessonPercentage={lessonPercentage}
                             />
                         </div>
                     ))}
