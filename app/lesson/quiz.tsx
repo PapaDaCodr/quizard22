@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Header } from "./header";
 import { challengeOptions, challenges } from "@/db/schema";
 import { QuestionBubble } from "./question-bubble";
+import { Challenge } from "./challenge";
 
 type Props = {
   initialPercentage: number;
@@ -31,8 +32,23 @@ export const Quiz = ({
   completed);
   return uncompletedIndex === -1 ? 0 : uncompletedIndex
   });
+  const [selectedOption, setSelectedOption] = useState<number>();
+  const [status, setStatus] = useState<"correct" | "wrong" | "none">("none");
 
   const challenge = challenges[activeIndex];
+  const options = challenge?.challengeOptions ?? [];
+
+  const onNext = () => {
+    setActiveIndex((current) => current + 1);
+  };
+
+  const onSelect = (id: number) => {
+    if (status !== "none") return;
+
+    setSelectedOption(id);
+  };
+
+  
 
   const title = challenge.type === "ASSIST" ? 
   "Select the correct answer" : challenge.question;
@@ -62,6 +78,14 @@ export const Quiz = ({
                 {challenge.type === "ASSIST" && (
                 <QuestionBubble question={challenge.question} />
                 )}
+                <Challenge
+                options={options}
+                onSelect={onSelect}
+                status={status}
+                selectedOption={selectedOption}
+                disabled={pending}
+                type={challenge.type}
+              />
               </div>
           </div>
         </div>

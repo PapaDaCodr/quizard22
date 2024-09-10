@@ -74,7 +74,8 @@ const main = async () => {
         id: 1,
         challengeId: 1,
         correct: true,
-        text: "Computer"
+        text: "Computer",
+        audioSrc: "computer.mp3"
 
       },
 
@@ -83,6 +84,8 @@ const main = async () => {
         challengeId: 1,
         correct: false,
         text: "Motherboard",
+        audioSrc: "motherboard.mp3"
+
       },
 
       {
@@ -90,6 +93,7 @@ const main = async () => {
         challengeId: 1,
         correct: false,
         text: "Operating System",
+        audioSrc:"operating system.mp3"
       }
     ])
 
