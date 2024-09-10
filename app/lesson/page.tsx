@@ -23,14 +23,18 @@ const LessonPage = async () => {
     .length / lesson.challenges.length * 100;
 
   return (
-    <Quiz
-      initialLessonId={lesson.id}
-      initialLessonChallenges={lesson.challenges}
-      initialHearts={userProgress.hearts}
-      initialPercentage={initialPercentage}
-      userSubscription={null}
-    />
-  )
+     <Quiz
+       initialLessonId={lesson.id}
+      //  initialLessonChallenges={lesson.challenges}
+       initialHearts={userProgress.hearts}
+       initialPercentage={initialPercentage}
+       userSubscription={null}
+     />
+
+  //   <div>
+  //     HEllo
+  //   </div>
+   )
 }
 
 export default LessonPage;

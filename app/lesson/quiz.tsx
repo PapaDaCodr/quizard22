@@ -7,7 +7,7 @@ type Props = {
   initialPercentage: number;
   initialHearts: number;
   initialLessonId: number;
-  initialLessonChallenges: any[]; // Using any[] as a temporary solution
+  // initialLessonChallenges: any[]; // Using any[] as a temporary solution
   userSubscription: any;
 };
 
@@ -15,11 +15,10 @@ export const Quiz = ({
   initialPercentage,
   initialHearts,
   initialLessonId,
-  initialLessonChallenges,
+  // initialLessonChallenges,
   userSubscription,
 }: Props) => {
-  console.log("Quiz component rendering");
-  console.log("Initial values:", { initialPercentage, initialHearts, initialLessonId, initialLessonChallenges });
+  
 
   const [hearts, setHearts] = useState(initialHearts);
   const [percentage, setPercentage] = useState(initialPercentage);
