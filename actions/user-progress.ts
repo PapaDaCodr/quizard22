@@ -26,7 +26,7 @@ export const upsertUserProgress = async (courseId: number) => {
 
   const existingUserProgress = await getServerSideUserProgress();
 
-  const userName = user.username ?? user.emailAddresses[0]?.emailAddress ?? "User";
+  const userName = user.username ?? user.firstName ?? "User";
   const userImageSrc = user.imageUrl ?? "/mascot.svg";
 
   if (existingUserProgress) {

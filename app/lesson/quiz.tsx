@@ -5,6 +5,7 @@ import { Header } from "./header";
 import { challengeOptions, challenges } from "@/db/schema";
 import { QuestionBubble } from "./question-bubble";
 import { Challenge } from "./challenge";
+import { Footer } from "./footer";
 
 type Props = {
   initialPercentage: number;
@@ -48,6 +49,28 @@ export const Quiz = ({
     setSelectedOption(id);
   };
 
+  const onContinue = () => {
+    if (!selectedOption) return;
+
+    if (status === "wrong") {
+      setStatus("none");
+      setSelectedOption(undefined);
+      return;
+    }
+
+    if (status === "correct") {
+      onNext();
+      setStatus("none");
+      setSelectedOption(undefined);
+      return;
+    }
+
+    const correctOption = options.find((option) => option.correct);
+
+    if (!correctOption) {
+      return;
+    }
+
   
 
   const title = challenge.type === "ASSIST" ? 
@@ -87,6 +110,11 @@ export const Quiz = ({
                 type={challenge.type}
               />
               </div>
+              <Footer
+                disabled={pending || !selectedOption}
+                status={status}
+                onCheck={onContinue}
+      />
           </div>
         </div>
       </div>

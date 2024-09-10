@@ -2,7 +2,7 @@
 import { cache } from "react";
 import db from "./drizzle";
 import { asc, eq } from "drizzle-orm";
-import { challengeProgress, challenges, lessons, units, userProgress } from "./schema";
+import { challengeProgress, challenges, lessons, units, userProgress, userSubscription } from "./schema";
 import { auth } from "@clerk/nextjs/server";
 import { courses } from "./schema";
 
@@ -198,3 +198,45 @@ export const getLessonPercentage = cache(async() =>{
 })
 
 
+const DAY_IN_MS = 86_400_000;
+export const getUserSubscription = cache(async () => {
+  const { userId } = await auth();
+
+  if (!userId) return null;
+
+  const data = await db.query.userSubscription.findFirst({
+    where: eq(userSubscription.userId, userId),
+  });
+
+  if (!data) return null;
+
+  const isActive = 
+    data.stripePriceId &&
+    data.stripeCurrentPeriodEnd?.getTime()! + DAY_IN_MS > Date.now();
+
+  return {
+    ...data,
+    isActive: !!isActive,
+  };
+});
+
+export const getTopTenUsers = cache(async () => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return [];
+  }
+
+  const data = await db.query.userProgress.findMany({
+    orderBy: (userProgress, { desc }) => [desc(userProgress.points)],
+    limit: 10,
+    columns: {
+      userId: true,
+      userName: true,
+      userImageSrc: true,
+      points: true,
+    },
+  });
+
+  return data;
+});
