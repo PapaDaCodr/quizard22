@@ -7,6 +7,7 @@ import {
     getServerSideUserProgress, 
     getUnits,
     getLessonPercentage,
+    getUserSubscription,
 } from "@/db/queries";
 import { redirect } from "next/navigation";
 import { Unit } from "./unit";
@@ -15,24 +16,21 @@ import { lessons, units as unitsSchema} from "@/db/schema";
 const LearnPage = async () => {
     try {
         const userProgressData = await getServerSideUserProgress();
-        console.log('User Progress Data:', userProgressData);
 
         const unitsData = await getUnits();
-        console.log('Units Data:', unitsData);
 
         const courseProgressData =  getCourseProgress();
-        console.log('Course Progress Data:', courseProgressData);
-
-        
 
         const lessonPercentageData =  getLessonPercentage();
-        console.log('lesson Progress Data:', lessonPercentageData);
 
-    const [userProgress, units, courseProgress, lessonPercentage ] = await Promise.all([
+        const userSubscriptionData = getUserSubscription();
+
+    const [userProgress, units, courseProgress, lessonPercentage, userSubscription ] = await Promise.all([
         userProgressData,
         unitsData,
         courseProgressData,
         lessonPercentageData,
+        userSubscriptionData,
     ]);
 
     if (!userProgress || !userProgress.activeCourse) {
@@ -55,7 +53,7 @@ const LearnPage = async () => {
                         activeCourse={userProgress.activeCourse}
                         hearts={userProgress.hearts}
                         points={userProgress.points}
-                        hasActiveSubscription={false}
+                        hasActiveSubscription={!!userSubscription?.isActive}
                     />
                 </StickyWrapper>
             </div>

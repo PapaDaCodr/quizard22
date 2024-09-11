@@ -28,6 +28,7 @@
     "next": "^14.2.7",
     "next-auth": "^4.24.7",
     "next-themes": "^0.3.0",
+    "paystack": "^2.0.1",
     "react": "^18",
     "react-circular-progressbar": "^2.1.0",
     "react-confetti": "^6.1.0",
