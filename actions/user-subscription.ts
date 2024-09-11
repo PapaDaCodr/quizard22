@@ -40,7 +40,7 @@ export const createStripeUrl = async () => {
             name: "Quizard Pro",
             description: "Unlimited Hearts",
           },
-          unit_amount: 20000, // Ghc200.00 
+          unit_amount: 200, // Ghc20.00 
           recurring: {
             interval: "month",
           },
