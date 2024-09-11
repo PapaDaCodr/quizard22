@@ -1,13 +1,13 @@
 'use server'
 
 import db from "@/db/drizzle";
-import { getCoursesById } from "@/db/queries";
-import { userProgress } from "@/db/schema";
+import { getCoursesById, getUserSubscription } from "@/db/queries";
+import { challengeProgress, challenges, userProgress } from "@/db/schema";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { getServerSideUserProgress } from "@/db/queries";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 
 export const upsertUserProgress = async (courseId: number) => {
@@ -41,8 +41,8 @@ export const upsertUserProgress = async (courseId: number) => {
     await db.insert(userProgress).values({
       userId,
       activeCourseId: courseId,
-      userName,
-      userImageSrc,
+      userName: user.firstName || "User",
+      userImageSrc:user.imageUrl || "/mascot.svg",
       hearts: 5,
       points: 0,
     });
@@ -52,3 +52,59 @@ export const upsertUserProgress = async (courseId: number) => {
   revalidatePath("/learn");
   redirect("/learn");
 }
+
+export const reduceHearts = async (challengeId: number) => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const currentUserProgress = await getServerSideUserProgress();
+  const userSubscription = await getUserSubscription();
+
+  const challenge = await db.query.challenges.findFirst({
+    where: eq(challenges.id, challengeId),
+  });
+
+  if (!challenge) {
+    throw new Error("Challenge not found");
+  }
+
+  const lessonId = challenge.lessonId;
+
+  const existingChallengeProgress = await db.query.challengeProgress.findFirst({
+    where: and(
+      eq(challengeProgress.userId, userId),
+      eq(challengeProgress.challengeId, challengeId),
+    ),
+  });
+
+  const isPractice = !!existingChallengeProgress;
+
+  if (isPractice) {
+    return { error: "practice" }; 
+  }
+
+  if (!currentUserProgress) {
+    throw new Error("User progress not found");
+  }
+
+  if (userSubscription?.isActive) {
+    return { error: "subscription" };
+  }
+
+  if (currentUserProgress.hearts === 0) {
+    return { error: "hearts" };
+  }
+
+  await db.update(userProgress).set({
+    hearts: Math.max(currentUserProgress.hearts - 1, 0),
+  }).where(eq(userProgress.userId, userId));
+
+  revalidatePath("/shop");
+  revalidatePath("/learn");
+  revalidatePath("/quests");
+  revalidatePath("/leaderboard");
+  revalidatePath(`/lesson/${lessonId}`);
+};

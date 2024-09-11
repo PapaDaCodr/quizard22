@@ -1,11 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { Header } from "./header";
-import { challengeOptions, challenges } from "@/db/schema";
+import { challengeOptions, challenges, userSubscription } from "@/db/schema";
 import { QuestionBubble } from "./question-bubble";
 import { Challenge } from "./challenge";
 import { Footer } from "./footer";
+import { upsertChallengeProgress } from "@/actions/challenge-progress";
+import { toast } from "sonner";
+import { reduceHearts } from "@/actions/user-progress";
+import { useAudio } from "react-use";
 
 type Props = {
   initialPercentage: number;
@@ -15,7 +19,9 @@ type Props = {
      completed: boolean;
      challengeOptions: typeof challengeOptions.$inferSelect[];
    })[];
-  userSubscription: any;
+  userSubscription: typeof userSubscription.$inferSelect & {
+    isActive: boolean;
+  } | null;
 };
 
 export const Quiz = ({
@@ -25,6 +31,21 @@ export const Quiz = ({
    initialLessonChallenges,
   userSubscription,
 }: Props) => {
+
+  const [finishAudio] = useAudio({ src: "/finish.mp3", autoPlay: true });
+  const [
+    correctAudio,
+    _c,
+    correctControls,
+  ] = useAudio({ src: "/correct.wav" });
+  const [
+    incorrectAudio,
+    _i,
+    incorrectControls,
+  ] = useAudio({ src: "/incorrect.wav" });
+
+  const [pending, startTransition] = useTransition()
+
   const [hearts, setHearts] = useState(initialHearts);
   const [percentage, setPercentage] = useState(initialPercentage);
   const [challenges] = useState(initialLessonChallenges);
@@ -49,7 +70,7 @@ export const Quiz = ({
     setSelectedOption(id);
   };
 
-  const onContinue = () => {
+  const onContinue = () => { 
     if (!selectedOption) return;
 
     if (status === "wrong") {
@@ -71,6 +92,46 @@ export const Quiz = ({
       return;
     }
 
+    if (correctOption.id === selectedOption) {
+      startTransition(() => {
+        upsertChallengeProgress(challenge.id)
+          .then((response) => {
+            if (response?.error === "hearts") {
+              openHeartsModal();
+              return;
+            }
+
+            correctControls.play();
+            setStatus("correct");
+            setPercentage((prev) => prev + 100 / challenges.length);
+
+            // This is a practice
+            if (initialPercentage === 100) {
+              setHearts((prev) => Math.min(prev + 1, 5));
+            }
+          })
+          .catch(() => toast.error("Something went wrong. Please try again."))
+      });
+    } else {
+      startTransition(() => {
+        reduceHearts(challenge.id)
+          .then((response) => {
+            if (response?.error === "hearts") {
+              openHeartsModal();
+              return;
+            }
+
+            incorrectControls.play();
+            setStatus("wrong");
+
+            if (!response?.error) {
+              setHearts((prev) => Math.max(prev - 1, 0));
+            }
+          })
+          .catch(() => toast.error("Something went wrong. Please try again."))
+      });
+    }
+  };
   
 
   const title = challenge.type === "ASSIST" ? 
