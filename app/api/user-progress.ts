@@ -1,9 +1,9 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getAuth } from "@clerk/nextjs/server";
-import db from "../db/drizzle";
+import db from "../../db/drizzle";
 import { eq } from "drizzle-orm";
-import { userProgress } from "../db/schema";
+import { userProgress } from "../../db/schema";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { userId } = getAuth(req);
 
