@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs"
+import { auth } from "@clerk/nextjs/server"
 
 const adminIds = [
   "user_2dGb6YEarBAQHrNYoB5dMtISRWK",
