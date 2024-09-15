@@ -24,7 +24,7 @@ type Props = {
    initialLessonChallenges: (typeof challenges.$inferSelect & {
      completed: boolean;
      challengeOptions: typeof challengeOptions.$inferSelect[];
-   })[];
+   })[] ;
   userSubscription: typeof userSubscription.$inferSelect & {
     isActive: boolean;
   } | null;
