@@ -7,7 +7,7 @@ import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { POINTS_TO_REFILL } from "@/constants";
 import { refillHearts } from "@/actions/user-progress";
-import { createStripeUrl } from "@/actions/user-subscription";
+import { createPaystackUrl } from "@/actions/user-subscription";
 
 type Props = {
   hearts: number;
@@ -35,7 +35,7 @@ export const Items = ({
 
   const onUpgrade = () => {
     startTransition(() => {
-      createStripeUrl()
+      createPaystackUrl()
         .then((response) => {
           if (response.data) {
             window.location.href = response.data;
@@ -101,7 +101,7 @@ export const Items = ({
           onClick={onUpgrade}
           disabled={pending}
         >
-          {hasActiveSubscription ? "settings" : "upgrade"}
+          {hasActiveSubscription ? "Manage" : "Upgrade"}
         </Button>
       </div>
     </ul>

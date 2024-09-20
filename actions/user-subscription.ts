@@ -1,12 +1,14 @@
 "use server";
 
 import { auth, currentUser } from "@clerk/nextjs/server";
-
-import { stripe } from "@/lib/stripe";
 import { absoluteUrl } from "@/lib/utils";
 import { getUserSubscription } from "@/db/queries";
+import axios from 'axios'; 
 
 const returnUrl = absoluteUrl("/shop");
+const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY; 
+const PAYSTACK_CUSTOM_LINK = "https://paystack.com/pay/quizard-pro";
+const QUIZARD_PRO_PLAN_CODE = process.env.QUIZARD_PRO_PLAN_CODE
 
 export const createPaystackUrl = async () => {
   const { userId } = await auth();
@@ -19,40 +21,29 @@ export const createPaystackUrl = async () => {
   const userSubscription = await getUserSubscription();
 
   if (userSubscription && userSubscription.CustomerId) {
-    const stripeSession = await stripe.billingPortal.sessions.create({
-      customer: userSubscription.CustomerId,
-      return_url: returnUrl,
-    });
+    // For existing customers, we'll create a manage subscription link
+    try {
+      const response = await axios.post(
+        'https://api.paystack.co/subscription',
+        {
+          customer: userSubscription.CustomerId,
+          plan: 'QUIZARD_PRO_PLAN_CODE', 
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
 
-    return { data: stripeSession.url };
+      return { data: response.data.data.manage_subscription_url };
+    } catch (error) {
+      console.error('Error creating manage subscription URL:', error);
+      throw new Error('Failed to create manage subscription URL');
+    }
   }
 
-  const stripeSession = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    payment_method_types: ["card"],
-    customer_email: user.emailAddresses[0].emailAddress,
-    line_items: [
-      {
-        quantity: 1,
-        price_data: {
-          currency: "Ghc",
-          product_data: {
-            name: "Quizard Pro",
-            description: "Unlimited Hearts",
-          },
-          unit_amount: 20, // Ghc20.00 
-          recurring: {
-            interval: "month",
-          },
-        },
-      },
-    ],
-    metadata: {
-      userId,
-    },
-    success_url: returnUrl,
-    cancel_url: returnUrl,
-  });
-
-  return { data: stripeSession.url };
+  // For new customers, we'll use the custom Paystack link
+  return { data: PAYSTACK_CUSTOM_LINK };
 };
