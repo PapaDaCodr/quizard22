@@ -1,7 +1,7 @@
 'use server'
 
 import db from "@/db/drizzle";
-import { getCoursesById, getUserSubscription } from "@/db/queries";
+import { getCourseById, getUserSubscription } from "@/db/queries";
 import { challengeProgress, challenges, userProgress } from "@/db/schema";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { getServerSideUserProgress } from "@/db/queries";
@@ -18,7 +18,7 @@ export const upsertUserProgress = async (courseId: number) => {
     throw new Error("Unauthorized");
   }
 
-  const course = await getCoursesById(courseId);
+  const course = await getCourseById(courseId);
 
   if (!course) {
     throw new Error("Course not found");

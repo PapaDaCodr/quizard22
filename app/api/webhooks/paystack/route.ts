@@ -12,6 +12,8 @@ export async function POST(req: Request) {
   const body = await req.text();
   const paystackSignature = headers().get("x-paystack-signature");
 
+  console.log("Received Paystack webhook:", body);
+
   // Verify Paystack webhook signature
   const hash = crypto
     .createHmac('sha512', PAYSTACK_SECRET_KEY)
@@ -23,6 +25,11 @@ export async function POST(req: Request) {
   }
 
   const event = JSON.parse(body);
+  console.log("Processed event:", event.event);
+  if (event.event === "charge.success") {
+    // Handle real charge.success event
+  } else if (event.event === "test") {
+    console.log("Received test webhook from Paystack");
 
   if (event.event === "subscription.create") {
     const { customer, plan, subscription } = event.data;
@@ -52,6 +59,6 @@ export async function POST(req: Request) {
       PriceId: event.data.plan.plan_code, // Update PriceId in case the plan has changed
     }).where(eq(userSubscription.SubscriptionId, event.data.subscription.subscription_code));
   }
-
+  }
   return new NextResponse(null, { status: 200 });
 };
