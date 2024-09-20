@@ -8,7 +8,7 @@ import { getUserSubscription } from "@/db/queries";
 
 const returnUrl = absoluteUrl("/shop");
 
-export const createStripeUrl = async () => {
+export const createPaystackUrl = async () => {
   const { userId } = await auth();
   const user = await currentUser();
 
@@ -18,9 +18,9 @@ export const createStripeUrl = async () => {
 
   const userSubscription = await getUserSubscription();
 
-  if (userSubscription && userSubscription.stripeCustomerId) {
+  if (userSubscription && userSubscription.CustomerId) {
     const stripeSession = await stripe.billingPortal.sessions.create({
-      customer: userSubscription.stripeCustomerId,
+      customer: userSubscription.CustomerId,
       return_url: returnUrl,
     });
 
@@ -40,7 +40,7 @@ export const createStripeUrl = async () => {
             name: "Quizard Pro",
             description: "Unlimited Hearts",
           },
-          unit_amount: 200, // Ghc20.00 
+          unit_amount: 20, // Ghc20.00 
           recurring: {
             interval: "month",
           },
