@@ -1,4 +1,3 @@
-
 import { Sidebar } from "@/components/sidebar";
 import { MobileHeader } from "@/components/mobile-header";
 type Props ={
